@@ -35,9 +35,6 @@ export default function Home() {
     setInput("");
     setLoading(true);
 
-    // Add empty assistant message to stream into
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -54,6 +51,7 @@ export default function Home() {
       const decoder = new TextDecoder();
       let buffer = "";
       let done = false;
+      let firstChunk = true;
 
       while (!done) {
         const { done: readerDone, value } = await reader.read();
@@ -68,19 +66,23 @@ export default function Home() {
           const raw = line.slice(6).trim();
           if (raw === "[DONE]") { done = true; break; }
 
-          setLoading(false);
-
           try {
             const parsed = JSON.parse(raw);
             if (parsed.text) {
-              setMessages((prev) => {
-                const updated = [...prev];
-                updated[updated.length - 1] = {
-                  role: "assistant",
-                  content: updated[updated.length - 1].content + parsed.text,
-                };
-                return updated;
-              });
+              if (firstChunk) {
+                firstChunk = false;
+                setLoading(false);
+                setMessages((prev) => [...prev, { role: "assistant", content: parsed.text }]);
+              } else {
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  updated[updated.length - 1] = {
+                    role: "assistant",
+                    content: updated[updated.length - 1].content + parsed.text,
+                  };
+                  return updated;
+                });
+              }
             }
           } catch {
             // skip malformed chunks
@@ -165,6 +167,18 @@ export default function Home() {
                 </div>
               </div>
             ))}
+            {loading && (
+              <div className="message message--assistant">
+                <div className="message-bubble">
+                  <span className="message-sender">Agente 30X</span>
+                  <div className="typing">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={bottomRef} />
           </div>
         )}

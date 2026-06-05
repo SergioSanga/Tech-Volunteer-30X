@@ -45,16 +45,19 @@ export default function Home() {
         body: JSON.stringify({ messages: newMessages }),
       });
 
-      if (!res.ok || !res.body) throw new Error("Network error");
+      if (!res.ok || !res.body) {
+        const body = await res.json().catch(() => ({ error: "Error del servidor" }));
+        throw new Error(body.error || "Error del servidor");
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-      let streamDone = false;
+      let done = false;
 
-      while (!streamDone) {
-        const { done, value } = await reader.read();
-        if (done) break;
+      while (!done) {
+        const { done: readerDone, value } = await reader.read();
+        if (readerDone) break;
 
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n");
@@ -63,7 +66,7 @@ export default function Home() {
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const raw = line.slice(6).trim();
-          if (raw === "[DONE]") { streamDone = true; break; }
+          if (raw === "[DONE]") { done = true; break; }
 
           setLoading(false);
 
@@ -84,12 +87,13 @@ export default function Home() {
           }
         }
       }
-    } catch {
+    } catch (e: any) {
+      const msg = e?.message || "Hubo un error de conexión. Intenta de nuevo.";
       setMessages((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "Hubo un error de conexión. Intenta de nuevo.",
+          content: `⚠️ ${msg}`,
         };
         return updated;
       });

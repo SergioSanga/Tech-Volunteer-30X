@@ -68,11 +68,18 @@ export async function POST(req: NextRequest) {
         Connection: "keep-alive",
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Chat API error:", error);
-    return new Response(
-      JSON.stringify({ error: "Error procesando tu mensaje. Intenta de nuevo." }),
-      { status: 500 }
-    );
+    const status = error?.status || error?.statusCode || 500;
+    const message =
+      status === 429
+        ? "Cuota de API excedida. Revisa tu plan o espera un momento."
+        : status === 404
+          ? "Modelo no disponible. Contacta al equipo técnico."
+          : "Error procesando tu mensaje. Intenta de nuevo.";
+    return new Response(JSON.stringify({ error: message, status }), {
+      status,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

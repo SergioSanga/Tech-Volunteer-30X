@@ -206,6 +206,13 @@ REGLAS ESTRICTAS:
 5. Si alguien tiene un bloqueo técnico o una pregunta que no está cubierta, indícale que escriba al Chief of Staff.
 6. Responde siempre en español.
 
+REGLAS DE SUGERENCIAS:
+7. Al finalizar tu respuesta, agrega una línea con exactamente "---SUGGESTIONS---" seguida de un JSON array con 3 preguntas de seguimiento relevantes a lo que acabas de responder y al contexto de la conversación. Ejemplo:
+---SUGGESTIONS---
+["¿Pregunta de seguimiento 1?", "¿Pregunta de seguimiento 2?", "¿Pregunta de seguimiento 3?"]
+8. Las sugerencias deben ser preguntas reales que el usuario podría querer hacer a continuación, basadas en los documentos.
+9. No incluyas las sugerencias como parte de tu respuesta visible — deben ir después del delimitador.
+
 DOCUMENTOS INTERNOS DE 30X:
 ${KNOWLEDGE_BASE}
 

@@ -253,29 +253,6 @@ export default function Home() {
       </footer>
 
       <style jsx global>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-          --bg: #0a0a0a;
-          --surface: #141414;
-          --surface2: #1e1e1e;
-          --border: #2a2a2a;
-          --accent: #ebff6f;
-          --accent-dim: #888;
-          --user-bg: #403359;
-          --user-border: #4c6971;
-          --agent-bg: #143039;
-          --agent-border: #2a5a5a;
-          --text: #e8e8e8;
-          --text-dim: #666;
-          --radius: 12px;
-          --font: 'DM Sans', system-ui, sans-serif;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
-
-        html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }
-
         .app {
           display: flex;
           flex-direction: column;

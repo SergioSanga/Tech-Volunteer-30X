@@ -1,0 +1,20 @@
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface2: #1e1e1e;
+  --border: #2a2a2a;
+  --accent: #ebff6f;
+  --accent-dim: #888;
+  --user-bg: #403359;
+  --user-border: #4c6971;
+  --agent-bg: #143039;
+  --agent-border: #2a5a5a;
+  --text: #e8e8e8;
+  --text-dim: #666;
+  --radius: 12px;
+  --font: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); }

@@ -50,10 +50,9 @@ export default function Home() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      let streamDone = false;
 
-      setLoading(false); // hide spinner once stream begins
-
-      while (true) {
+      while (!streamDone) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -64,7 +63,9 @@ export default function Home() {
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const raw = line.slice(6).trim();
-          if (raw === "[DONE]") break;
+          if (raw === "[DONE]") { streamDone = true; break; }
+
+          setLoading(false);
 
           try {
             const parsed = JSON.parse(raw);

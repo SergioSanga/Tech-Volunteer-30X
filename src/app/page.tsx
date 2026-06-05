@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: "user" | "assistant";
@@ -182,14 +184,18 @@ export default function Home() {
                   <span className="message-sender">
                     {msg.role === "user" ? "Tú" : "Agente 30X"}
                   </span>
-                  <p className="message-content">
-                    {msg.content}
+                  <div className="message-content">
+                    {msg.content ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.content}
+                      </ReactMarkdown>
+                    ) : null}
                     {msg.role === "assistant" &&
                       i === messages.length - 1 &&
                       msg.content === "" && (
                         <span className="cursor" />
                       )}
-                  </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -347,8 +353,13 @@ export default function Home() {
         .message-content {
           padding: 12px 16px; border-radius: var(--radius);
           font-size: 14px; line-height: 1.65;
-          white-space: pre-wrap; word-break: break-word;
+          word-break: break-word;
         }
+        .message-content p { margin: 0; }
+        .message-content p + p { margin-top: 8px; }
+        .message-content ul, .message-content ol { margin: 4px 0; padding-left: 20px; }
+        .message-content li { margin: 2px 0; }
+        .message-content strong { color: #fff; }
         .message--user .message-content {
           background: var(--user-bg); border: 1px solid var(--user-border);
           color: #c8c8e8; border-bottom-right-radius: 4px;

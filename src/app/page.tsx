@@ -15,10 +15,25 @@ const SUGGESTED_QUESTIONS = [
   "¿A quién le escribo si tengo un bloqueo técnico?",
 ];
 
+const SUGGESTIONS_SEPARATOR = "---SUGGESTIONS---";
+
+function parseSuggestions(text: string): { clean: string; suggestions: string[] } {
+  const idx = text.lastIndexOf(SUGGESTIONS_SEPARATOR);
+  if (idx === -1) return { clean: text, suggestions: [] };
+  const clean = text.slice(0, idx).trimEnd();
+  const json = text.slice(idx + SUGGESTIONS_SEPARATOR.length).trim();
+  try {
+    const parsed = JSON.parse(json);
+    if (Array.isArray(parsed)) return { clean, suggestions: parsed.slice(0, 3) };
+  } catch {}
+  return { clean, suggestions: [] };
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>(SUGGESTED_QUESTIONS);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -89,6 +104,17 @@ export default function Home() {
           }
         }
       }
+
+      // Parse suggestions from the final message
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (!last || last.role !== "assistant") return prev;
+        const { clean, suggestions: newSuggestions } = parseSuggestions(last.content);
+        if (newSuggestions.length > 0) setSuggestions(newSuggestions);
+        const updated = [...prev];
+        updated[updated.length - 1] = { ...last, content: clean };
+        return updated;
+      });
     } catch (e: any) {
       const msg = e?.message || "Hubo un error de conexión. Intenta de nuevo.";
       setMessages((prev) => {
@@ -185,6 +211,20 @@ export default function Home() {
       </main>
 
       <footer className="footer">
+        {!isEmpty && suggestions.length > 0 && (
+          <div className="suggestions-bar">
+            {suggestions.map((q) => (
+              <button
+                key={q}
+                className="suggestion-pill"
+                onClick={() => sendMessage(q)}
+                disabled={loading}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="input-area">
           <textarea
             ref={inputRef}
@@ -344,9 +384,25 @@ export default function Home() {
           30% { transform: translateY(-4px); opacity: 1; }
         }
 
+        .suggestions-bar {
+          display: flex; gap: 8px; padding: 0 0 10px;
+          overflow-x: auto; scrollbar-width: none;
+        }
+        .suggestions-bar::-webkit-scrollbar { display: none; }
+        .suggestion-pill {
+          white-space: nowrap; flex-shrink: 0;
+          background: var(--surface); border: 1px solid var(--border);
+          color: var(--accent-dim); padding: 6px 14px;
+          border-radius: 20px; font-size: 12px; line-height: 1.3;
+          cursor: pointer; font-family: var(--font);
+          transition: all 0.15s;
+        }
+        .suggestion-pill:hover { border-color: #444; color: var(--text); background: var(--surface2); }
+        .suggestion-pill:disabled { opacity: 0.3; cursor: not-allowed; }
+
         .footer {
           border-top: 1px solid var(--border);
-          padding: 16px 24px 20px; background: var(--bg); flex-shrink: 0;
+          padding: 12px 24px 20px; background: var(--bg); flex-shrink: 0;
         }
         .input-area { display: flex; gap: 10px; align-items: flex-end; }
         .input {

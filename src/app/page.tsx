@@ -156,10 +156,8 @@ export default function Home() {
                   </span>
                   <p className="message-content">
                     {msg.content}
-                    {/* blinking cursor on the last assistant message while streaming */}
                     {msg.role === "assistant" &&
                       i === messages.length - 1 &&
-                      loading === false &&
                       msg.content === "" && (
                         <span className="cursor" />
                       )}
@@ -167,18 +165,6 @@ export default function Home() {
                 </div>
               </div>
             ))}
-            {loading && (
-              <div className="message message--assistant">
-                <div className="message-bubble">
-                  <span className="message-sender">Agente 30X</span>
-                  <div className="typing">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
-            )}
             <div ref={bottomRef} />
           </div>
         )}

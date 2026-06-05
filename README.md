@@ -5,7 +5,7 @@ Agente conversacional de onboarding para el equipo de 30X. Responde preguntas so
 ## Stack
 
 - **Framework:** Next.js 14 (App Router)
-- **LLM:** Google Gemini 1.5 Flash (gratis)
+- **LLM:** Google Gemini 2.5 Flash (gratis)
 - **Deploy:** Vercel
 - **Lenguaje:** TypeScript
 
@@ -13,7 +13,7 @@ Agente conversacional de onboarding para el equipo de 30X. Responde preguntas so
 
 ### 1. Requisitos
 - Node.js 18+
-- Una API key de Google Gemini (gratis en [aistudio.google.com](https://aistudio.google.com/app/apikey))
+- Una API key de Google Gemini (gratis en [aistudio.google.com/apikey](https://aistudio.google.com/apikey))
 
 ### 2. Instalar dependencias
 
@@ -88,7 +88,7 @@ src/
 
 | Variable | Descripción | Dónde conseguirla |
 |---|---|---|
-| `GEMINI_API_KEY` | API key de Google Gemini | [aistudio.google.com](https://aistudio.google.com/app/apikey) |
+| `GEMINI_API_KEY` | API key de Google Gemini | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 
 No se necesitan más credenciales. El proyecto no tiene base de datos ni autenticación.
 
